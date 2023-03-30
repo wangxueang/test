@@ -3,6 +3,15 @@ var ballX, ballY, ballSpeedX, ballSpeedY;
 var paddle1Y, paddle2Y, paddleHeight, paddleWidth;
 
 function initialize() {
+    
+    // 获取 Canvas 元素
+    var canvas = document.getElementById('canvas');
+
+    // 禁止浏览器滚动
+    document.addEventListener('touchmove', function(event) {
+        event.preventDefault();
+    }, {passive: false});
+    
     // Set up game variables
     canvas = document.getElementById('game_canvas');
     context = canvas.getContext('2d');
