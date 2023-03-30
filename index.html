@@ -1,58 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Ping Pong Game</title>
+    <title>Pong Game</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-        }
-        #game {
-            width: 100%;
-            height: 100%;
-            background-color: black;
-            position: relative;
-        }
-        #paddle1, #paddle2 {
-            width: 6%;
-            height: 20%;
-            background-color: white;
-            position: absolute;
-            top: 40%;
-        }
-        #paddle1 {
-            left: 2%;
-        }
-        #paddle2 {
-            right: 2%;
-        }
-        #ball {
-            width: 2%;
-            height: 4%;
-            background-color: white;
-            border-radius: 50%;
-            position: absolute;
-            left: 49%;
-            top: 48%;
-        }
-        #score {
-            color: white;
-            font-size: 3vw;
-            position: absolute;
-            top: 1%;
-            left: 45%;
+        canvas {
+            display: block;
+            margin: 0 auto;
         }
     </style>
 </head>
 <body>
-    <div id="game">
-        <div id="paddle1"></div>
-        <div id="paddle2"></div>
-        <div id="ball"></div>
-        <div id="score">0 - 0</div>
-    </div>
-    <script src="game.js"></script>
+    <canvas id='game_canvas' width='300' height='200'></canvas>
+    <script src='pong.js'></script>
 </body>
 </html>
