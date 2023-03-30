@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>多点触控乒乓球</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+</head>
+<body>
+    <canvas id="game-canvas" width="800" height="500"></canvas>
+    <script>
+        $(document).ready(function() {
+            // 初始化游戏画布
+            var canvas = document.getElementById("game-canvas");
+            var ctx = canvas.getContext("2d");
+            var width = canvas.width;
+            var height = canvas.height;
+            
+            // 定义游戏对象
+            var game = {
+                ball: {
+                    x: width / 2,
+                    y: height / 2,
+                    radius: 10,
+                    speedX: 5,
+                    speedY: 5
+                },
+                playerA: {
+                    x: 10,
+                    y: height / 2 - 50,
+                    width: 10,
+                    height: 100
+                },
+                playerB: {
+                    x: width - 20,
+                    y: height / 2 - 50,
+                    width: 10,
+                    height: 100
+                }
+            };
+            
+            // 绘制游戏对象
+            function draw() {
+                // clear previous frame
+                ctx.clearRect(0, 0, width, height);
+                
+                // draw ball
+                ctx.beginPath();
+                ctx.arc(game.ball.x, game.ball.y, game.ball.radius, 0, Math.PI*2);
+                ctx.fillStyle = "#000000";
+                ctx.fill();
+                ctx.closePath();
+                
+                // draw player A
+                ctx.beginPath();
+                ctx.rect(game.playerA.x, game.playerA.y, game.playerA.width, game.playerA.height);
+                ctx.fillStyle = "#000000";
+                ctx.fill();
+                ctx.closePath();
+                
+                // draw player B
+                ctx.beginPath();
+                ctx.rect(game.playerB.x, game.playerB.y, game.playerB.width, game.playerB.height);
+                ctx.fillStyle = "#000000";
+                ctx.fill();
+                ctx.closePath();
+            }
+            
+            // 主循环
+            function mainLoop() {
+                // update game state
+                game.ball.x += game.ball.speedX;
+                game.ball.y += game.ball.speedY;
+                if (game.ball.y + game.ball.radius >= height || game.ball.y - game.ball.radius <= 0) {
+                    game.ball.speedY = -game.ball.speedY;
+                }
+                if (game.ball.x + game.ball.radius >= width) {
+                    // player A loses
+                    alert("Player B wins!");
+                    return;
+                }
+                if (game.ball.x - game.ball.radius <= 0) {
+                    // player B loses
+                    alert("Player A wins!");
+                    return;
+                }
+                if (game.ball.x - game.ball.radius <= game.playerA.x + game.playerA.width && game.ball.y >= game.playerA.y && game.ball.y <= game.playerA.y + game.playerA.height) {
+                    game.ball.speedX = -game.ball.speedX;
+                }
+                if (game.ball.x + game.ball.radius >= game.playerB.x && game.ball.y >= game.playerB.y && game.ball.y <= game.playerB.y + game.playerB.height) {
+                    game.ball.speedX = -game.ball.speedX;
+                }
+                
+                // redraw game objects
+                draw();
+            }
+            
+            // 处理玩家 A 的触屏手势
+            function handlePlayerA(e) {
+                var touch = e.changedTouches[0];
+                var y = touch.clientY - canvas.offsetTop;
+                game.playerA.y = y;
+                e.preventDefault();
+            }
+            
+            // 处理玩家 B 的触屏手势
+            function handlePlayerB(e) {
+                var touch = e.changedTouches[0];
+                var y = touch.clientY - canvas.offsetTop;
+                game.playerB.y = y;
+                e.preventDefault();
+            }
+            
+            // 添加触控事件监听器
+            canvas.addEventListener("touchmove", handlePlayerA, false);
+            canvas.addEventListener("touchmove", handlePlayerB, false);
+            
+            // 开始游戏循环
+            var gameInterval = setInterval(mainLoop, 20);
+        });
+    </script>
+</body>
+</html>
