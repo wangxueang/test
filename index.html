@@ -1,17 +1,189 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Pong Game</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>单人/双人乒乓球游戏</title>
     <style>
-        canvas {
+        /* 设定画布样式 */
+        #canvas {
             display: block;
             margin: 0 auto;
+            border: 1px solid #ddd;
+            background-color: #eee;
         }
     </style>
 </head>
 <body>
-    <canvas id='game_canvas' width='300' height='200'></canvas>
-    <script src='pong.js'></script>
+    <canvas id="canvas" width="640" height="480"></canvas>
+
+    <script>
+        // 获取 Canvas 元素及上下文
+        var canvas = document.getElementById('canvas');
+        var ctx = canvas.getContext('2d');
+
+        // 禁止浏览器滚动
+        document.addEventListener('touchmove', function(event) {
+            event.preventDefault();
+        }, {passive: false});
+
+        // 定义球拍变量，包括位置、大小和移动速度
+        var paddleHeight = 75;
+        var paddleWidth = 10;
+        var paddleSpeed = 5;
+        var leftPaddle = {
+            x: 10,
+            y: (canvas.height - paddleHeight) / 2,
+            dy: 0,
+            score: 0,
+        };
+        var rightPaddle = {
+            x: canvas.width - paddleWidth - 10,
+            y: (canvas.height - paddleHeight) / 2,
+            dy: 0,
+            score: 0,
+        };
+
+        // 定义球变量，包括位置、大小和移动速度
+        var ballRadius = 10;
+        var ballSpeed = 5;
+        var ball = {
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            dx: ballSpeed,
+            dy: -ballSpeed,
+        };
+
+        // 定义绘制球拍的函数
+        function drawPaddle(paddle) {
+            ctx.fillStyle = 'green';
+            ctx.fillRect(paddle.x, paddle.y, paddleWidth, paddleHeight);
+        }
+
+        // 定义绘制球的函数
+        function drawBall() {
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, ballRadius, 0, Math.PI * 2);
+            ctx.fillStyle = 'red';
+            ctx.fill();
+        }
+
+        // 定义更新球拍的函数
+        function updatePaddles() {
+            leftPaddle.y += leftPaddle.dy;
+            rightPaddle.y += rightPaddle.dy;
+
+            // 检查球拍是否超出画布范围，如果是，则阻止移动
+            if (leftPaddle.y < 0) {
+                leftPaddle.y = 0;
+            }
+            if (leftPaddle.y > canvas.height - paddleHeight) {
+                leftPaddle.y = canvas.height - paddleHeight;
+            }
+            if (rightPaddle.y < 0) {
+                rightPaddle.y = 0;
+            }
+            if (rightPaddle.y > canvas.height - paddleHeight) {
+                rightPaddle.y = canvas.height - paddleHeight;
+            }
+        }
+
+        // 定义更新球的函数
+        function updateBall() {
+            // 将球移动到新位置
+            ball.x += ball.dx;
+            ball.y += ball.dy;
+
+            // 检查球是否碰到了上/下边界
+            if (ball.y - ballRadius < 0 || ball.y + ballRadius > canvas.height) {
+                ball.dy = -ball.dy;
+            }
+
+            // 检查球是否碰到了左/右边界
+            if (ball.x - ballRadius < 0) {
+                rightPaddle.score++;
+                resetBall();
+            } else if (ball.x + ballRadius > canvas.width) {
+                leftPaddle.score++;
+                resetBall();
+            }
+
+            // 检查球是否碰到了球拍
+            if (ball.x - ballRadius < leftPaddle.x + paddleWidth &&
+                ball.y + ballRadius > leftPaddle.y &&
+                ball.y - ballRadius < leftPaddle.y + paddleHeight) {
+                ball.dx = -ball.dx;
+            } else if (ball.x + ballRadius > rightPaddle.x &&
+                ball.y + ballRadius > rightPaddle.y &&
+                ball.y - ballRadius < rightPaddle.y + paddleHeight) {
+                ball.dx = -ball.dx;
+            }
+        }
+
+        // 定义重置球的函数
+        function resetBall() {
+            ball.x = canvas.width / 2;
+            ball.y = canvas.height / 2;
+            ball.dx = ballSpeed * (Math.random() < 0.5 ? -1 : 1);
+            ball.dy = ballSpeed * (Math.random() < 0.5 ? -1 : 1);
+        }
+
+        // 定义绘制得分的函数
+        function drawScore() {
+            ctx.font = '48px Arial';
+            ctx.fillText(leftPaddle.score, 50, 50);
+            ctx.fillText(rightPaddle.score, canvas.width - 100, 50);
+        }
+
+        // 定义主循环函数
+        function mainLoop() {
+            // 清空画布
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 绘制球拍和球
+            drawPaddle(leftPaddle);
+            drawPaddle(rightPaddle);
+            drawBall();
+
+            // 更新球拍和球
+            updatePaddles();
+            updateBall();
+
+            // 绘制得分
+            drawScore();
+
+            // 循环调用主循环函数
+            requestAnimationFrame(mainLoop);
+        }
+
+        // 添加触摸事件监听器
+        canvas.addEventListener('touchstart', function(event) {
+            event.preventDefault();
+            var touch = event.touches[0];
+            if (touch.clientX < canvas.width / 2) {
+                leftPaddle.dy = -paddleSpeed;
+            } else {
+                rightPaddle.dy = -paddleSpeed;
+            }
+        });
+        canvas.addEventListener('touchend', function(event) {
+            event.preventDefault();
+            if (event.touches.length === 0) {
+                leftPaddle.dy = 0;
+                rightPaddle.dy = 0;
+            }
+        });
+        canvas.addEventListener('touchmove', function(event) {
+            event.preventDefault();
+            var touch = event.touches[0];
+            if (touch.clientX < canvas.width / 2) {
+                leftPaddle.y = touch.clientY - paddleHeight / 2;
+            } else {
+                rightPaddle.y = touch.clientY - paddleHeight / 2;
+            }
+        });
+
+        resetBall();
+        mainLoop();
+    </script>
 </body>
 </html>
