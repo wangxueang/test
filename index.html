@@ -158,27 +158,35 @@
         // 添加触摸事件监听器
         canvas.addEventListener('touchstart', function(event) {
             event.preventDefault();
-            var touch = event.touches[0];
-            if (touch.clientX < canvas.width / 2) {
-                leftPaddle.dy = -paddleSpeed;
-            } else {
-                rightPaddle.dy = -paddleSpeed;
+            for (var i = 0; i < event.touches.length; i++) {
+                var touch = event.touches[i];
+                if (touch.clientX < canvas.width / 2) {
+                    leftPaddle.dy = -paddleSpeed;
+                } else {
+                    rightPaddle.dy = -paddleSpeed;
+                }
             }
         });
         canvas.addEventListener('touchend', function(event) {
             event.preventDefault();
-            if (event.touches.length === 0) {
-                leftPaddle.dy = 0;
-                rightPaddle.dy = 0;
+            for (var i = 0; i < event.touches.length; i++) {
+                var touch = event.touches[i];
+                if (touch.clientX < canvas.width / 2) {
+                    leftPaddle.dy = 0;
+                } else {
+                    rightPaddle.dy = 0;
+                }
             }
         });
         canvas.addEventListener('touchmove', function(event) {
             event.preventDefault();
-            var touch = event.touches[0];
-            if (touch.clientX < canvas.width / 2) {
-                leftPaddle.y = touch.clientY - paddleHeight / 2;
-            } else {
-                rightPaddle.y = touch.clientY - paddleHeight / 2;
+            for (var i = 0; i < event.touches.length; i++) {
+                var touch = event.touches[i];
+                if (touch.clientX < canvas.width / 2) {
+                    leftPaddle.y = touch.clientY - paddleHeight / 2;
+                } else {
+                    rightPaddle.y = touch.clientY - paddleHeight / 2;
+                }
             }
         });
 
