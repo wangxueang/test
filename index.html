@@ -1,145 +1,58 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Ping Pong Game</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<style>
-		body {
-			margin: 0;
-			padding: 0;
-			overflow: hidden;
-			background-color: #000;
-			color: #fff;
-			font-family: Arial, sans-serif;
-		}
-		canvas {
-			display: block;
-			position: absolute;
-			top: 0;
-			left: 0;
-			right: 0;
-			bottom: 0;
-			margin: auto;
-		}
-		#score {
-			position: absolute;
-			top: 10px;
-			left: 10px;
-			font-size: 24px;
-			font-weight: bold;
-		}
-	</style>
+    <title>Ping Pong Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        #game {
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            position: relative;
+        }
+        #paddle1, #paddle2 {
+            width: 6%;
+            height: 20%;
+            background-color: white;
+            position: absolute;
+            top: 40%;
+        }
+        #paddle1 {
+            left: 2%;
+        }
+        #paddle2 {
+            right: 2%;
+        }
+        #ball {
+            width: 2%;
+            height: 4%;
+            background-color: white;
+            border-radius: 50%;
+            position: absolute;
+            left: 49%;
+            top: 48%;
+        }
+        #score {
+            color: white;
+            font-size: 3vw;
+            position: absolute;
+            top: 1%;
+            left: 45%;
+        }
+    </style>
 </head>
 <body>
-	<canvas id="canvas"></canvas>
-	<div id="score">0 : 0</div>
-	<script>
-		// 获取canvas元素
-		var canvas = document.getElementById("canvas");
-		// 获取绘图上下文
-		var ctx = canvas.getContext("2d");
-		// 设置canvas宽高
-		canvas.width = window.innerWidth;
-		canvas.height = window.innerHeight;
-		// 设置球的半径
-		var ballRadius = 10;
-		// 设置球的初始位置和速度
-		var x = canvas.width / 2;
-		var y = canvas.height / 2;
-		var dx = 5;
-		var dy = -5;
-		// 设置球拍的宽高和初始位置
-		var paddleHeight = 100;
-		var paddleWidth = 10;
-		var paddle1X = 20;
-		var paddle1Y = (canvas.height - paddleHeight) / 2;
-		var paddle2X = canvas.width - 30;
-		var paddle2Y = (canvas.height - paddleHeight) / 2;
-		// 设置分数
-		var score1 = 0;
-		var score2 = 0;
-		// 监听触摸事件
-		canvas.addEventListener("touchmove", function(event) {
-			// 获取触摸点的坐标
-			var touchY = event.touches[0].clientY;
-			// 将球拍的位置设置为触摸点的y坐标
-			if (touchY > paddleHeight / 2 && touchY < canvas.height - paddleHeight / 2) {
-				paddle1Y = touchY - paddleHeight / 2;
-			}
-		});
-		// 绘制球拍和球
-		function drawPaddlesAndBall() {
-			// 绘制球拍
-			ctx.fillStyle = "#fff";
-			ctx.fillRect(paddle1X, paddle1Y, paddleWidth, paddleHeight);
-			ctx.fillRect(paddle2X, paddle2Y, paddleWidth, paddleHeight);
-			// 绘制球
-			ctx.beginPath();
-			ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
-			ctx.fillStyle = "#fff";
-			ctx.fill();
-			ctx.closePath();
-		}
-		// 绘制分数
-		function drawScore() {
-			ctx.font = "24px Arial";
-			ctx.fillText(score1 + " : " + score2, 10, 30);
-		}
-		// 判断球是否碰到球拍或边界
-		function checkCollision() {
-			// 判断球是否碰到左边界或右边界
-			if (x + dx < ballRadius || x + dx > canvas.width - ballRadius) {
-				// 判断球是否碰到球拍
-				if (y > paddle1Y && y < paddle1Y + paddleHeight || y > paddle2Y && y < paddle2Y + paddleHeight) {
-					dx = -dx;
-				} else {
-					// 球未碰到球拍，游戏结束，分数加一
-					if (x + dx < ballRadius) {
-						score2++;
-					} else {
-						score1++;
-					}
-					// 重置球的位置和速度
-					x = canvas.width / 2;
-					y = canvas.height / 2;
-					dx = 5;
-					dy = -5;
-				}
-			}
-			// 判断球是否碰到上边界或下边界
-			if (y + dy < ballRadius || y + dy > canvas.height - ballRadius) {
-				dy = -dy;
-			}
-		}
-		// 更新球拍和球的位置
-		function update() {
-			// 更新球的位置
-			x += dx;
-			y += dy;
-			// 更新球拍的位置
-			paddle2Y = y - paddleHeight / 2;
-			// 判断球拍是否碰到边界
-			if (paddle1Y < 0) {
-				paddle1Y = 0;
-			}
-			if (paddle1Y > canvas.height - paddleHeight) {
-				paddle1Y = canvas.height - paddleHeight;
-			}
-			if (paddle2Y < 0) {
-				paddle2Y = 0;
-			}
-			if (paddle2Y > canvas.height - paddleHeight) {
-				paddle2Y = canvas.height - paddleHeight;
-			}
-			// 绘制球拍和球
-			drawPaddlesAndBall();
-			// 绘制分数
-			drawScore();
-			// 判断球是否碰到球拍或边界
-			checkCollision();
-		}
-		// 每隔10毫秒更新一次
-		setInterval(update, 10);
-	</script>
+    <div id="game">
+        <div id="paddle1"></div>
+        <div id="paddle2"></div>
+        <div id="ball"></div>
+        <div id="score">0 - 0</div>
+    </div>
+    <script src="game.js"></script>
 </body>
 </html>
