@@ -14,7 +14,7 @@
     </style>
 </head>
 <body>
-    <canvas id="canvas" width="800 height="450"></canvas>
+    <canvas id="canvas" width="600" height="450"></canvas>
 
     <script>
         // 获取 Canvas 元素及上下文
@@ -157,14 +157,14 @@
 
         // 添加触摸事件监听器
         canvas.addEventListener('touchstart', function(event) {
-    event.preventDefault();
-    for (var i = 0; i < event.touches.length; i++) {
+        event.preventDefault();
+        for (var i = 0; i < event.touches.length; i++) {
         var touch = event.touches[i];
         if (touch.clientX < canvas.width / 2) {
             leftPaddle.touched = true;
             leftPaddle.touchIds.push(touch.identifier);
             leftPaddle.touchYs.push(touch.clientY);
-        } else {
+                } else {
             rightPaddle.touched = true;
             rightPaddle.touchIds.push(touch.identifier);
             rightPaddle.touchYs.push(touch.clientY);
